@@ -3,7 +3,9 @@ pub mod commands;
 pub use commands::{login, register, help};
 
 
-mod utils;
+mod db;
 mod repl;
+mod models;
 
-use utils::*;
+use db::*;
+use models::*;

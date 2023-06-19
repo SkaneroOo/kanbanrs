@@ -1,7 +1,15 @@
-use sqlite::{self, State, Row, Connection};
+use std::error::Error;
+
+use sqlite::{self, State, Row, Connection, Statement};
+
+use super::models::User;
+
+pub struct Database {
+    conn: Connection
+}
 
 
-pub fn get_db() -> Connection {
+pub fn get_db() -> Database {
     let connection = match sqlite::open("db.sqlite") {
         Ok(conn) => conn,
         Err(e) => panic!("{}", e)
@@ -20,5 +28,30 @@ pub fn get_db() -> Connection {
         panic!("Cannot prepare db\n{err}");
     };
 
-    connection
+    Database{
+        conn: connection
+    }
+}
+
+impl Database {
+    #[inline]
+    pub fn prepare<T: AsRef<str>>(&self, statement: T) -> std::result::Result<sqlite::Statement<'_>, sqlite::Error> {
+        self.conn.prepare(statement)
+    }
+
+    pub fn get_user(&self, username: &str) -> Option<User> {
+        let query = "SELECT * FROM users WHERE username = ?;";
+
+        let mut statement = self.conn.prepare(query).unwrap();
+        statement.bind((1, username)).unwrap();
+
+        match statement.next() {
+            Ok(State::Row) => {
+                Some(statement.into())
+            },
+            Ok(State::Done) => None,
+            Err(_) => None
+        }
+    }
+
 }

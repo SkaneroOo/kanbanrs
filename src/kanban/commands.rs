@@ -4,7 +4,9 @@ use sqlite::{self, State, Row};
 use pwhash::bcrypt;
 use rpassword::read_password;
 
-use super::utils::get_db;
+use crate::kanban::db;
+
+use super::db::get_db;
 use super::repl::repl;
 
 pub fn help() {
@@ -17,7 +19,7 @@ pub fn help() {
 
 
 pub fn register() {
-    let connection = get_db();
+    let db = get_db();
 
 
     print!("Type your username: ");
@@ -46,10 +48,10 @@ pub fn register() {
 
     let query = "SELECT * FROM users WHERE username = ?;";
 
-    let mut statement = connection.prepare(query).unwrap();
+    let mut statement = db.prepare(query).unwrap();
     statement.bind((1, username.as_str())).unwrap();
 
-    if let Ok(State::Row) = statement.next() {
+    if db.get_user(username.as_str()).is_some() {
         println!("User with provided username already exists. Try logging in instead.");
         return;
     }
@@ -58,7 +60,7 @@ pub fn register() {
 
     let query = "INSERT INTO users (username, password) VALUES (?, ?);";
 
-    statement = connection.prepare(query).unwrap();
+    statement = db.prepare(query).unwrap();
     statement.bind((1, username.as_str())).unwrap();
     statement.bind((2, hashed.as_str())).unwrap();
 
@@ -69,7 +71,7 @@ pub fn register() {
 }
 
 pub fn login() {
-    let connection = get_db();
+    let db = get_db();
 
     print!("Type your username: ");
     let mut username = String::new();
@@ -81,29 +83,20 @@ pub fn login() {
     std::io::stdout().flush().unwrap();
     let passwd = read_password().unwrap();
 
-    let query = "SELECT * FROM users WHERE username = ?;";
+    let user = db.get_user(username.as_str());
 
-    let mut statement = connection.prepare(query).unwrap();
-    statement.bind((1, username.as_str())).unwrap();
-
-    match statement.next() {
-        Ok(State::Done) => {
-            println!("There's no user with username `{username}`.");
-            return;
-        }
-        Ok(State::Row) => {}
-        Err(e) => panic!("{}", e)
+    if user.is_none() {
+        println!("There's no user with username `{username}`.");
+        return;
     }
+
+    let user = user.unwrap();
     
-    let pass_hash = statement.read::<String, _>("password").unwrap();
-    if !bcrypt::verify(passwd, pass_hash.as_str()) {
+    if !user.verify_password(passwd) {
         println!("Invalid password. Try again.");
         return
     }
 
-    let username = statement.read::<String, _>("username").unwrap();
-    let idx = statement.read::<i64, _>("idx").unwrap();
-
-    repl(idx, username);
+    repl(user);
 
 }
