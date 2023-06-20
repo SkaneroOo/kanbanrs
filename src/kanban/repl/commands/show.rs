@@ -2,9 +2,20 @@ use crate::kanban::models::KanbanPath;
 
 pub fn show(parameters: Vec<&str>) {
     if parameters.len() < 2 {
-        println!("Provide element identifier");
+        println!("Provide kanban identifier");
         return
     }
     let ident: KanbanPath = parameters.get(1).unwrap().to_owned().into();
-    ident.print();
+    match ident {
+        KanbanPath{board: Some(b), list: None, task: None} => {
+            println!("Select board {b}")
+        }
+        KanbanPath{board: Some(b), list: Some(l), task: None} => {
+            println!("Select list {l} from board {b}")
+        }
+        KanbanPath{board: Some(b), list: Some(l), task: Some(t)} => {
+            println!("Select task {t} from list {l} from board {b}")
+        }
+        _ => println!("Invalid identifier format")
+    }
 }
