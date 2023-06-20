@@ -1,10 +1,9 @@
-use std::io::Write;
-
 use sqlite::{self, State, Row};
 use pwhash::bcrypt;
 use rpassword::read_password;
 
 use crate::kanban::db;
+use crate::kanban::utils::prompt;
 
 use super::db::get_db;
 use super::repl::repl;
@@ -22,9 +21,8 @@ pub fn register() {
     let db = get_db();
 
 
-    print!("Type your username: ");
+    prompt("Type your username: ");
     let mut username = String::new();
-    std::io::stdout().flush().unwrap();
     std::io::stdin().read_line(&mut username).unwrap();
     username = username.trim().to_owned();
     
@@ -32,12 +30,10 @@ pub fn register() {
     let mut passwd2;
 
     loop {
-        print!("Type your password: ");
-        std::io::stdout().flush().unwrap();
+        prompt("Type your password: ");
         passwd = read_password().unwrap();
         
-        print!("Confirm your password: ");
-        std::io::stdout().flush().unwrap();
+        prompt("Confirm your password: ");
         passwd2 = read_password().unwrap();
 
         if passwd == passwd2 {
@@ -73,14 +69,12 @@ pub fn register() {
 pub fn login() {
     let db = get_db();
 
-    print!("Type your username: ");
+    prompt("Type your username: ");
     let mut username = String::new();
-    std::io::stdout().flush().unwrap();
     std::io::stdin().read_line(&mut username).unwrap();
     username = username.trim().to_owned();
 
-    print!("Type your password: ");
-    std::io::stdout().flush().unwrap();
+    prompt("Type your password: ");
     let passwd = read_password().unwrap();
 
     let user = db.get_user(username.as_str());
