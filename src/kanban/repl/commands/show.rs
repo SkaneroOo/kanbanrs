@@ -1,6 +1,6 @@
-use crate::kanban::models::KanbanPath;
+use crate::kanban::models::{KanbanPath, User};
 
-pub fn show(parameters: Vec<&str>) {
+pub fn show(parameters: Vec<&str>, _user: &User) {
     if parameters.len() < 2 {
         println!("Provide kanban identifier");
         return

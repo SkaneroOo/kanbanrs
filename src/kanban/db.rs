@@ -18,7 +18,7 @@ pub fn get_db() -> Database {
     let query = "
         CREATE TABLE IF NOT EXISTS users (idx INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, password TEXT NOT NULL);
         CREATE TABLE IF NOT EXISTS boards (idx INTEGER PRIMARY KEY AUTOINCREMENT, owner INTEGER NOT NULL, title TEXT NOT NULL, description TEXT NOT NULL DEFAULT '');
-        CREATE TABLE IF NOT EXISTS members (idx INTEGER PRIMARY KEY AUTOINCREMENT, board INTEGER NOT NULL, user INTEGER NOT NULL, permissions INTEGER NOT NULL);
+        CREATE TABLE IF NOT EXISTS members (idx INTEGER PRIMARY KEY AUTOINCREMENT, board INTEGER NOT NULL, user INTEGER NOT NULL, permissions INTEGER NOT NULL DEFAULT 0);
         CREATE TABLE IF NOT EXISTS lists (idx INTEGER PRIMARY KEY AUTOINCREMENT, board INTEGER NOT NULL, title TEXT NOT NULL, description TEXT NOT NULL DEFAULT '');
         CREATE TABLE IF NOT EXISTS tasks (idx INTEGER PRIMARY KEY AUTOINCREMENT, list INTEGER NOT NULL, title TEXT NOT NULL, description TEXT NOT NULL DEFAULT '');
         CREATE TABLE IF NOT EXISTS comments (idx INTEGER PRIMARY KEY AUTOINCREMENT, task INTEGER DEFAULT NULL, comment INTEGER DEFAULT NULL, message TEXT NOT NULL);
@@ -54,4 +54,19 @@ impl Database {
         }
     }
 
+}
+
+#[macro_export]
+macro_rules! get_statement {
+    ($db:expr, $query:expr, $($binds:expr),*) => {
+        {
+            let mut statement = ($db).prepare($query).unwrap();
+            let mut i = 0;
+            $(
+                i += 1;
+                statement.bind((i, $binds)).unwrap();
+            )*
+            statement
+        }
+    };
 }
