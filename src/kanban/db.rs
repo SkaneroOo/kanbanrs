@@ -94,6 +94,16 @@ impl Database {
         }
         None
     }
+    
+        pub fn get_user_boards(&self, user_id: i64) -> Vec<Board> {
+            let query = "SELECT * FROM boards WHERE idx IN (SELECT board FROM members WHERE user = ?);";
+            let mut statement = get_statement!(self.conn, query, user_id);
+            let mut ret: Vec<Board> = Vec::new();
+            for row in statement.iter().flatten() {
+                ret.push(row.into())
+            }
+            ret
+        }
 
     pub fn get_board_lists(&self, board_id: i64) -> Vec<List> {
         let query = "SELECT * FROM lists WHERE board = ?;";
@@ -105,10 +115,10 @@ impl Database {
         ret
     }
 
-    pub fn get_user_boards(&self, user_id: i64) -> Vec<Board> {
-        let query = "SELECT * FROM boards WHERE idx IN (SELECT board FROM members WHERE user = ?);";
-        let mut statement = get_statement!(self.conn, query, user_id);
-        let mut ret: Vec<Board> = Vec::new();
+    pub fn get_list_tasks(&self, list_id: i64) -> Vec<Task> {
+        let query = "SELECT * FROM tasks WHERE board = ?;";
+        let mut statement = get_statement!(self.conn, query, list_id);
+        let mut ret: Vec<Task> = Vec::new();
         for row in statement.iter().flatten() {
             ret.push(row.into())
         }
