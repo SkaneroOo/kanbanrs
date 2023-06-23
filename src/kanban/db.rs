@@ -4,6 +4,8 @@ use sqlite::{self, State, Row, Connection, Statement};
 
 use super::models::User;
 
+use crate::get_statement;
+
 pub struct Database {
     conn: Connection
 }
@@ -39,11 +41,11 @@ impl Database {
         self.conn.prepare(statement)
     }
 
+    
     pub fn get_user(&self, username: &str) -> Option<User> {
         let query = "SELECT * FROM users WHERE username = ?;";
 
-        let mut statement = self.conn.prepare(query).unwrap();
-        statement.bind((1, username)).unwrap();
+        let mut statement = get_statement!(self.conn, query, username);
 
         match statement.next() {
             Ok(State::Row) => {

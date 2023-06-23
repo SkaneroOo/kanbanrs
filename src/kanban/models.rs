@@ -34,6 +34,100 @@ impl User {
     }
 }
 
+
+#[derive(PartialEq, Eq, Debug)]
+pub struct Board {
+    pub idx: i64,
+    pub owner: i64,
+    pub title: String,
+    pub description: String
+}
+
+impl From<Row> for Board {
+    fn from(row: Row) -> Self {
+        Board {
+            idx: row.read::<i64, _>("idx"),
+            owner: row.read::<i64, _>("owner"),
+            title: row.read::<&str, _>("title").to_owned(),
+            description: row.read::<&str, _>("description").to_owned(),
+        }
+    }
+}
+
+impl From<Statement<'_>> for Board {
+    fn from(stmnt: Statement) -> Self {
+        Board {
+            idx: stmnt.read::<i64, _>("idx").unwrap(),
+            owner: stmnt.read::<i64, _>("owner").unwrap(),
+            title: stmnt.read::<String, _>("username").unwrap(),
+            description: stmnt.read::<String, _>("password").unwrap(),
+        }
+    }
+}
+
+
+#[derive(PartialEq, Eq, Debug)]
+pub struct List {
+    pub idx: i64,
+    pub board: i64,
+    pub title: String,
+    pub description: String
+}
+
+impl From<Row> for List {
+    fn from(row: Row) -> Self {
+        List {
+            idx: row.read::<i64, _>("idx"),
+            board: row.read::<i64, _>("board"),
+            title: row.read::<&str, _>("title").to_owned(),
+            description: row.read::<&str, _>("description").to_owned(),
+        }
+    }
+}
+
+impl From<Statement<'_>> for List {
+    fn from(stmnt: Statement) -> Self {
+        List {
+            idx: stmnt.read::<i64, _>("idx").unwrap(),
+            board: stmnt.read::<i64, _>("board").unwrap(),
+            title: stmnt.read::<String, _>("title").unwrap(),
+            description: stmnt.read::<String, _>("description").unwrap(),
+        }
+    }
+}
+
+
+#[derive(PartialEq, Eq, Debug)]
+pub struct Task {
+    pub idx: i64,
+    pub list: i64,
+    pub title: String,
+    pub description: String
+}
+
+impl From<Row> for Task {
+    fn from(row: Row) -> Self {
+        Task {
+            idx: row.read::<i64, _>("idx"),
+            list: row.read::<i64, _>("list"),
+            title: row.read::<&str, _>("title").to_owned(),
+            description: row.read::<&str, _>("description").to_owned(),
+        }
+    }
+}
+
+impl From<Statement<'_>> for Task {
+    fn from(stmnt: Statement) -> Self {
+        Task {
+            idx: stmnt.read::<i64, _>("idx").unwrap(),
+            list: stmnt.read::<i64, _>("list").unwrap(),
+            title: stmnt.read::<String, _>("title").unwrap(),
+            description: stmnt.read::<String, _>("description").unwrap(),
+        }
+    }
+}
+
+
 #[derive(PartialEq, Eq, Debug)]
 pub struct KanbanPath<'a> {
     pub board: Option<&'a str>,
