@@ -23,7 +23,7 @@ Kanbanrs allows creating multiple user accounts and managing many kanban boards 
 
 ### Tasks
 - [x] create
-- [ ] display
+- [x] display
 - [ ] add/edit description
 - [ ] move to different list
 - [ ] add comment

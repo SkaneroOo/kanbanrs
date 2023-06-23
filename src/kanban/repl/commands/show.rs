@@ -72,7 +72,41 @@ pub fn show(parameters: Vec<&str>, user: &User) {
             }
         }
         KanbanPath{board: Some(b), list: Some(l), task: Some(t)} => {
-            println!("Select task {t} from list {l} from board {b}")
+            let board = match db.get_user_board_named(b, user.idx) {
+                Some(sb) => sb,
+                None => {
+                    println!("You're not a member of board `{b}`");
+                    return
+                }
+            };
+            let list = match db.get_board_list_named(l, board.idx) {
+                Some(sl) => sl,
+                None => {
+                    println!("Board `{b}` doesn't contain list `{l}`");
+                    return
+                }
+            };
+            println!("{0}{1}", format_name(list.title), {
+                if list.description.is_empty() {
+                    String::new()
+                } else {
+                    format!(" - {}", list.description)
+                }
+            });
+            let task = match db.get_list_task_named(t, list.idx) {
+                Some(st) => st,
+                None => {
+                    println!("list `{l}` doesn't contain task `{t}`");
+                    return
+                }
+            };
+            println!("{0}{1}", format_name(task.title), {
+                if task.description.is_empty() {
+                    String::new()
+                } else {
+                    format!(" - {}", task.description)
+                }
+            });
         }
         _ => println!("Invalid identifier format")
     }
