@@ -1,6 +1,6 @@
 use std::error::Error;
 
-use sqlite::{self, State, Row, Connection, Statement};
+use sqlite::{self, State, Row, Connection};
 
 use super::models::{User, Task, List, Board};
 
@@ -93,6 +93,26 @@ impl Database {
             }
         }
         None
+    }
+
+    pub fn get_board_lists(&self, board_id: i64) -> Vec<List> {
+        let query = "SELECT * FROM lists WHERE board = ?;";
+        let mut statement = get_statement!(self.conn, query, board_id);
+        let mut ret: Vec<List> = Vec::new();
+        for row in statement.iter().flatten() {
+            ret.push(row.into());
+        }
+        ret
+    }
+
+    pub fn get_user_boards(&self, user_id: i64) -> Vec<Board> {
+        let query = "SELECT * FROM boards WHERE idx IN (SELECT board FROM members WHERE user = ?);";
+        let mut statement = get_statement!(self.conn, query, user_id);
+        let mut ret: Vec<Board> = Vec::new();
+        for row in statement.iter().flatten() {
+            ret.push(row.into())
+        }
+        ret
     }
 
 }
