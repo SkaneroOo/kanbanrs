@@ -2,7 +2,7 @@ use std::error::Error;
 
 use sqlite::{self, State, Row, Connection, Statement};
 
-use super::models::User;
+use super::models::{User, Task, List, Board};
 
 use crate::get_statement;
 
@@ -54,6 +54,45 @@ impl Database {
             Ok(State::Done) => None,
             Err(_) => None
         }
+    }
+
+
+    pub fn get_user_board_named(&self, name: &str, user_id: i64) -> Option<Board> {
+        let query = "SELECT * FROM boards WHERE idx IN (SELECT board FROM members WHERE user = ?);";
+        let mut statement = get_statement!(self.conn, query, user_id);
+        for row in statement.iter().flatten() {
+            let board: Board = row.into();
+            if board.title.eq_ignore_ascii_case(name) {
+                return Some(board);
+            }
+        }
+        None
+    }
+
+
+    pub fn get_board_list_named(&self, name: &str, board_id: i64) -> Option<List> {
+        let query = "SELECT * FROM lists WHERE board = ?;";
+        let mut statement = get_statement!(self.conn, query, board_id);
+        for row in statement.iter().flatten() {
+            let board: List = row.into();
+            if board.title.eq_ignore_ascii_case(name) {
+                return Some(board);
+            }
+        }
+        None
+    }
+
+
+    pub fn get_list_task_named(&self, name: &str, list_id: i64) -> Option<Task> {
+        let query = "SELECT * FROM tasks WHERE list = ?;";
+        let mut statement = get_statement!(self.conn, query, list_id);
+        for row in statement.iter().flatten() {
+            let board: Task = row.into();
+            if board.title.eq_ignore_ascii_case(name) {
+                return Some(board);
+            }
+        }
+        None
     }
 
 }
