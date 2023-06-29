@@ -9,15 +9,12 @@ fn main() {
 
     let mut args = env::args();
 
-    let name = args.next().unwrap();
+    let name = args.next().unwrap_or_default();
     
-    let command = match args.next() {
-        Some(cmd) => cmd,
-        None => {
-            println!("CLI kanban written in Rust by Skaner\n");
-            println!("For usage information use {name} help");
-            return;
-        }
+    let Some(command) = args.next() else {
+        println!("CLI kanban written in Rust by Skaner\n");
+        println!("For usage information use {name} help");
+        return;
     };
 
     match command.as_str() {

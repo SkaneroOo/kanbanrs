@@ -10,4 +10,4 @@ mod utils;
 
 use db::*;
 use models::*;
-use utils::*;
+use utils::format_name;

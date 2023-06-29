@@ -5,9 +5,9 @@ pub fn prompt(message: &str) {
     if let Err(e) = stdout.write_all(message.as_bytes()) {
         panic!("{e}");
     };
-    stdout.flush().unwrap();
+    stdout.flush().expect("stdout flush cannot be performed");
 }
 
-pub fn format_name(name: String) -> String {
+pub fn format_name(name: &str) -> String {
     name.replace('_', " ")
 }

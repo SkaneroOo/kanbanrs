@@ -10,7 +10,7 @@ pub struct User {
 
 impl From<Row> for User {
     fn from(row: Row) -> Self {
-        User {
+        Self {
             idx: row.read::<i64, _>("idx"),
             username: row.read::<&str, _>("username").to_owned(),
             password: row.read::<&str, _>("password").to_owned(),
@@ -18,13 +18,15 @@ impl From<Row> for User {
     }
 }
 
-impl From<Statement<'_>> for User {
-    fn from(stmnt: Statement) -> Self {
-        User {
-            idx: stmnt.read::<i64, _>("idx").unwrap(),
-            username: stmnt.read::<String, _>("username").unwrap(),
-            password: stmnt.read::<String, _>("password").unwrap(),
-        }
+impl TryFrom<Statement<'_>> for User {
+    type Error = &'static str;
+
+    fn try_from(stmnt: Statement) -> Result<Self, Self::Error> {
+        Ok(Self {
+            idx: stmnt.read::<i64, _>("idx").expect("no field `idx` found"),
+            username: stmnt.read::<String, _>("username").expect("no field `username` found"),
+            password: stmnt.read::<String, _>("password").expect("no field `password` found"),
+        })
     }
 }
 
@@ -45,7 +47,7 @@ pub struct Board {
 
 impl From<Row> for Board {
     fn from(row: Row) -> Self {
-        Board {
+        Self {
             idx: row.read::<i64, _>("idx"),
             owner: row.read::<i64, _>("owner"),
             title: row.read::<&str, _>("title").to_owned(),
@@ -54,14 +56,16 @@ impl From<Row> for Board {
     }
 }
 
-impl From<Statement<'_>> for Board {
-    fn from(stmnt: Statement) -> Self {
-        Board {
-            idx: stmnt.read::<i64, _>("idx").unwrap(),
-            owner: stmnt.read::<i64, _>("owner").unwrap(),
-            title: stmnt.read::<String, _>("username").unwrap(),
-            description: stmnt.read::<String, _>("password").unwrap(),
-        }
+impl TryFrom<Statement<'_>> for Board {
+    type Error = &'static str;
+
+    fn try_from(stmnt: Statement) -> Result<Self, Self::Error> {
+        Ok(Self {
+            idx: stmnt.read::<i64, _>("idx").expect("no field `idx` found"),
+            owner: stmnt.read::<i64, _>("owner").expect("no field `owner` found"),
+            title: stmnt.read::<String, _>("title").expect("no field `title` found"),
+            description: stmnt.read::<String, _>("description").expect("no field `description` found"),
+        })
     }
 }
 
@@ -76,7 +80,7 @@ pub struct List {
 
 impl From<Row> for List {
     fn from(row: Row) -> Self {
-        List {
+        Self {
             idx: row.read::<i64, _>("idx"),
             board: row.read::<i64, _>("board"),
             title: row.read::<&str, _>("title").to_owned(),
@@ -85,14 +89,16 @@ impl From<Row> for List {
     }
 }
 
-impl From<Statement<'_>> for List {
-    fn from(stmnt: Statement) -> Self {
-        List {
-            idx: stmnt.read::<i64, _>("idx").unwrap(),
-            board: stmnt.read::<i64, _>("board").unwrap(),
-            title: stmnt.read::<String, _>("title").unwrap(),
-            description: stmnt.read::<String, _>("description").unwrap(),
-        }
+impl TryFrom<Statement<'_>> for List {
+    type Error = &'static str;
+
+    fn try_from(stmnt: Statement) -> Result<Self, Self::Error> {
+        Ok(Self {
+            idx: stmnt.read::<i64, _>("idx").expect("no field `idx` found"),
+            board: stmnt.read::<i64, _>("board").expect("no field `board` found"),
+            title: stmnt.read::<String, _>("title").expect("no field `title` found"),
+            description: stmnt.read::<String, _>("description").expect("no field `description` found"),
+        })
     }
 }
 
@@ -107,7 +113,7 @@ pub struct Task {
 
 impl From<Row> for Task {
     fn from(row: Row) -> Self {
-        Task {
+        Self {
             idx: row.read::<i64, _>("idx"),
             list: row.read::<i64, _>("list"),
             title: row.read::<&str, _>("title").to_owned(),
@@ -116,14 +122,16 @@ impl From<Row> for Task {
     }
 }
 
-impl From<Statement<'_>> for Task {
-    fn from(stmnt: Statement) -> Self {
-        Task {
-            idx: stmnt.read::<i64, _>("idx").unwrap(),
-            list: stmnt.read::<i64, _>("list").unwrap(),
-            title: stmnt.read::<String, _>("title").unwrap(),
-            description: stmnt.read::<String, _>("description").unwrap(),
-        }
+impl TryFrom<Statement<'_>> for Task {
+    type Error = &'static str;
+
+    fn try_from(stmnt: Statement) -> Result<Self, Self::Error> {
+        Ok(Self {
+            idx: stmnt.read::<i64, _>("idx").expect("no field `idx` found"),
+            list: stmnt.read::<i64, _>("list").expect("no field `list` found"),
+            title: stmnt.read::<String, _>("title").expect("no field `title` found"),
+            description: stmnt.read::<String, _>("description").expect("no field `description` found"),
+        })
     }
 }
 
@@ -138,7 +146,7 @@ pub struct Comment {
 
 impl From<Row> for Comment {
     fn from(row: Row) -> Self {
-        Comment {
+        Self {
             idx: row.read::<i64, _>("idx"),
             task: row.read::<i64, _>("task"),
             comment: row.read::<Option<i64>, _>("comment"),
@@ -147,14 +155,16 @@ impl From<Row> for Comment {
     }
 }
 
-impl From<Statement<'_>> for Comment {
-    fn from(stmnt: Statement) -> Self {
-        Comment {
-            idx: stmnt.read::<i64, _>("idx").unwrap(),
-            task: stmnt.read::<i64, _>("task").unwrap(),
-            comment: stmnt.read::<Option<i64>, _>("comment").unwrap(),
-            message: stmnt.read::<String, _>("message").unwrap(),
-        }
+impl TryFrom<Statement<'_>> for Comment {
+    type Error = &'static str;
+
+    fn try_from(stmnt: Statement) -> Result<Self, Self::Error> {
+        Ok(Self {
+            idx: stmnt.read::<i64, _>("idx").expect("no field `idx` found"),
+            task: stmnt.read::<i64, _>("task").expect("no field `task` found"),
+            comment: stmnt.read::<Option<i64>, _>("comment").expect("no field `comment` found"),
+            message: stmnt.read::<String, _>("message").expect("no field `message` found"),
+        })
     }
 }
 
@@ -176,7 +186,7 @@ impl<'a> From<&'a str> for KanbanPath<'a> {
                 task: None
             }
         }
-        for part in parts.iter() {
+        for part in &parts {
             if part.is_empty() {
                 return Self {
                     board: None,
@@ -199,30 +209,30 @@ impl<'a> From<&'a str> for KanbanPath<'a> {
         let ret = Self {
             board: match parts.next() {
                 Some(v) if !v.is_empty() => {
-                    if !v.is_empty() {
-                        Some(v)
-                    } else {
+                    if v.is_empty() {
                         None
+                    } else {
+                        Some(v)
                     }
                 },
                 _ => None
             },
             list: match parts.next() {
                 Some(v) if !v.is_empty() => {
-                    if !v.is_empty() {
-                        Some(v)
-                    } else {
+                    if v.is_empty() {
                         None
+                    } else {
+                        Some(v)
                     }
                 },
                 _ => None
             },
             task: match parts.next() {
                 Some(v) if !v.is_empty() => {
-                    if !v.is_empty() {
-                        Some(v)
-                    } else {
+                    if v.is_empty() {
                         None
+                    } else {
+                        Some(v)
                     }
                 },
                 _ => None
@@ -242,18 +252,18 @@ impl KanbanPath<'_> {
     #[allow(dead_code)]
     pub fn print(&self) {
         if self.board.is_none() {
-            println!("None")
+            println!("None");
         }
-        let mut result = String::from(self.board.unwrap());
-        if self.list.is_some() {
+        let mut result = String::from(self.board.unwrap_or_else(|| unreachable!()));
+        if let Some(list) = self.list {
             result.push('.');
-            result.push_str(self.list.unwrap())
+            result.push_str(list);
         }
-        if self.task.is_some() {
+        if let Some(task) = self.task {
             result.push('.');
-            result.push_str(self.task.unwrap())
+            result.push_str(task);
         }
-        println!("{result}")
+        println!("{result}");
     }
 }
 
@@ -267,73 +277,73 @@ mod tests {
         #[test]
         fn chech_valid_kanban_board_path() {
             let path: KanbanPath = "board".into();
-            assert_eq!(path, KanbanPath{board: Some("board"), list: None, task: None})
+            assert_eq!(path, KanbanPath{board: Some("board"), list: None, task: None});
         }
 
         #[test]
         fn chech_invalid_kanban_board_path() {
             let path: KanbanPath = "board.".into();
-            assert_eq!(path, KanbanPath{board: None, list: None, task: None})
+            assert_eq!(path, KanbanPath{board: None, list: None, task: None});
         }
 
         #[test]
         fn chech_invalid_kanban_board_path_2() {
             let path: KanbanPath = ".board".into();
-            assert_eq!(path, KanbanPath{board: None, list: None, task: None})
+            assert_eq!(path, KanbanPath{board: None, list: None, task: None});
         }
 
         #[test]
         fn chech_invalid_kanban_board_path_3() {
             let path: KanbanPath = "bóard".into();
-            assert_eq!(path, KanbanPath{board: None, list: None, task: None})
+            assert_eq!(path, KanbanPath{board: None, list: None, task: None});
         }
 
         #[test]
         fn chech_valid_kanban_list_path() {
             let path: KanbanPath = "1board.list".into();
-            assert_eq!(path, KanbanPath{board: Some("1board"), list: Some("list"), task: None})
+            assert_eq!(path, KanbanPath{board: Some("1board"), list: Some("list"), task: None});
         }
 
         #[test]
         fn chech_invalid_kanban_list_path() {
             let path: KanbanPath = "board.list.".into();
-            assert_eq!(path, KanbanPath{board: None, list: None, task: None})
+            assert_eq!(path, KanbanPath{board: None, list: None, task: None});
         }
 
         #[test]
         fn chech_invalid_kanban_list_path_2() {
             let path: KanbanPath = ".board.list".into();
-            assert_eq!(path, KanbanPath{board: None, list: None, task: None})
+            assert_eq!(path, KanbanPath{board: None, list: None, task: None});
         }
 
         #[test]
         fn chech_invalid_kanban_list_path_3() {
             let path: KanbanPath = "board.liśt".into();
-            assert_eq!(path, KanbanPath{board: None, list: None, task: None})
+            assert_eq!(path, KanbanPath{board: None, list: None, task: None});
         }
 
         #[test]
         fn chech_valid_kanban_task_path() {
             let path: KanbanPath = "board.list2.task".into();
-            assert_eq!(path, KanbanPath{board: Some("board"), list: Some("list2"), task: Some("task")})
+            assert_eq!(path, KanbanPath{board: Some("board"), list: Some("list2"), task: Some("task")});
         }
 
         #[test]
         fn chech_invalid_kanban_task_path() {
             let path: KanbanPath = "board.list.task.".into();
-            assert_eq!(path, KanbanPath{board: None, list: None, task: None})
+            assert_eq!(path, KanbanPath{board: None, list: None, task: None});
         }
 
         #[test]
         fn chech_invalid_kanban_task_path_2() {
             let path: KanbanPath = ".board.list.task".into();
-            assert_eq!(path, KanbanPath{board: None, list: None, task: None})
+            assert_eq!(path, KanbanPath{board: None, list: None, task: None});
         }
 
         #[test]
         fn chech_invalid_kanban_task_path_3() {
             let path: KanbanPath = "board.lis t.task".into();
-            assert_eq!(path, KanbanPath{board: None, list: None, task: None})
+            assert_eq!(path, KanbanPath{board: None, list: None, task: None});
         }
     }
 

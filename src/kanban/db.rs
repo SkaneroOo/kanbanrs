@@ -11,7 +11,7 @@ pub struct Database {
 }
 
 
-pub fn get_db() -> Database {
+pub fn get_database() -> Database {
     let connection = match sqlite::open("db.sqlite") {
         Ok(conn) => conn,
         Err(e) => panic!("{}", e)
@@ -49,10 +49,9 @@ impl Database {
 
         match statement.next() {
             Ok(State::Row) => {
-                Some(statement.into())
+                Some(statement.try_into().expect("cannot read user data from query"))
             },
-            Ok(State::Done) => None,
-            Err(_) => None
+            _ => None
         }
     }
 
@@ -100,7 +99,7 @@ impl Database {
             let mut statement = get_statement!(self.conn, query, user_id);
             let mut ret: Vec<Board> = Vec::new();
             for row in statement.iter().flatten() {
-                ret.push(row.into())
+                ret.push(row.into());
             }
             ret
         }
@@ -120,7 +119,7 @@ impl Database {
         let mut statement = get_statement!(self.conn, query, list_id);
         let mut ret: Vec<Task> = Vec::new();
         for row in statement.iter().flatten() {
-            ret.push(row.into())
+            ret.push(row.into());
         }
         ret
     }

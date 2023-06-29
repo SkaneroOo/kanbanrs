@@ -1,14 +1,14 @@
 use sqlite::{State, Statement};
 
-use crate::{kanban::{models::{KanbanPath, User, Board, List, Task}, db::{get_db, Database}}, get_statement};
+use crate::{kanban::{models::{KanbanPath, User, Board, List, Task}, db::{get_database, Database}}, get_statement};
 
-pub fn new(parameters: Vec<&str>, user: &User) {
+pub fn new(parameters: &[&str], user: &User) {
     if parameters.len() < 2 {
         println!("Provide kanban identifier");
         return
     }
-    let ident: KanbanPath = parameters.get(1).unwrap().to_owned().into();
-    let db = get_db();
+    let ident: KanbanPath = parameters.get(1).unwrap_or_else(|| unreachable!()).to_owned().into();
+    let db = get_database();
     match ident {
         KanbanPath{board: Some(b), list: None, task: None} => {
             
@@ -19,10 +19,7 @@ pub fn new(parameters: Vec<&str>, user: &User) {
             
             let query = "INSERT INTO boards (owner, title) VALUES (?, ?) RETURNING idx;";
             let mut statement = get_statement!(db, query, user.idx, b);
-            let mut idx = -1;
-            if let Ok(State::Row) = statement.next() {
-                idx = statement.read::<i64, _>(0).unwrap_or(-1);
-            }
+            let idx = if matches!(statement.next(), Ok(State::Row)) { statement.read::<i64, _>(0).unwrap_or(-1) } else { -1 };
             if idx == -1 {
                 println!("Something went wrong while creating board");
                 return
@@ -32,11 +29,11 @@ pub fn new(parameters: Vec<&str>, user: &User) {
             let mut statement = get_statement!(db, query, idx, user.idx);
             match statement.next() {
                 Ok(State::Done) => {
-                    println!("Successfully created new kanban board")
+                    println!("Successfully created new kanban board");
                 }
                 Err(e) => {
                     println!("Something went wrong while associating board with member");
-                    println!("{e}")
+                    println!("{e}");
                 }
                 _ => unreachable!("How did it even happen?")
             }
@@ -44,12 +41,9 @@ pub fn new(parameters: Vec<&str>, user: &User) {
         }
         KanbanPath{board: Some(b), list: Some(l), task: None} => {
             
-            let board = match db.get_user_board_named(b, user.idx) {
-                None => {
-                    println!("You're not a member of board `{b}`");
-                    return
-                },
-                Some(b) => b
+            let Some(board) = db.get_user_board_named(b, user.idx) else {
+                println!("You're not a member of board `{b}`");
+                return
             };
 
             if db.get_board_list_named(l, board.idx).is_some() {
@@ -62,24 +56,18 @@ pub fn new(parameters: Vec<&str>, user: &User) {
             if let Err(e) =  statement.next() {
                 println!("Something went wrong while creating board\n{e}");
             }
-            println!("Successfully created new list")
+            println!("Successfully created new list");
         }
         KanbanPath{board: Some(b), list: Some(l), task: Some(t)} => {
             
-            let board = match db.get_user_board_named(b, user.idx) {
-                None => {
-                    println!("You're not a member of board `{b}`");
-                    return
-                },
-                Some(sb) => sb
+            let Some(board) = db.get_user_board_named(b, user.idx) else {
+                println!("You're not a member of board `{b}`");
+                return
             };
             
-            let list = match db.get_board_list_named(l, board.idx) {
-                None => {
-                    println!("Board `{b}` doesn't contain list `{l}`");
-                    return
-                },
-                Some(sl) => sl
+            let Some(list) = db.get_board_list_named(l, board.idx) else {
+                println!("Board `{b}` doesn't contain list `{l}`");
+                return
             };
 
             if db.get_list_task_named(t, list.idx).is_some() {
@@ -92,7 +80,7 @@ pub fn new(parameters: Vec<&str>, user: &User) {
             if let Err(e) =  statement.next() {
                 println!("Something went wrong while creating task\n{e}");
             }
-            println!("Successfully created new kanban task")
+            println!("Successfully created new kanban task");
         }
         _ => println!("Invalid identifier format")
     }

@@ -31,3 +31,6 @@ Kanbanrs allows creating multiple user accounts and managing many kanban boards 
 ### Comments
 - [ ] create
 - [ ] reply
+
+
+###### Project made using clippy with additional modules `pedantic`, `nursery` and `unwrap_used`
