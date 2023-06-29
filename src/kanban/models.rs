@@ -129,6 +129,37 @@ impl From<Statement<'_>> for Task {
 
 
 #[derive(PartialEq, Eq, Debug)]
+pub struct Comment {
+    idx: i64,
+    task: i64,
+    comment: Option<i64>,
+    message: String
+}
+
+impl From<Row> for Comment {
+    fn from(row: Row) -> Self {
+        Comment {
+            idx: row.read::<i64, _>("idx"),
+            task: row.read::<i64, _>("task"),
+            comment: row.read::<Option<i64>, _>("comment"),
+            message: row.read::<&str, _>("message").to_owned(),
+        }
+    }
+}
+
+impl From<Statement<'_>> for Comment {
+    fn from(stmnt: Statement) -> Self {
+        Comment {
+            idx: stmnt.read::<i64, _>("idx").unwrap(),
+            task: stmnt.read::<i64, _>("task").unwrap(),
+            comment: stmnt.read::<Option<i64>, _>("comment").unwrap(),
+            message: stmnt.read::<String, _>("message").unwrap(),
+        }
+    }
+}
+
+
+#[derive(PartialEq, Eq, Debug)]
 pub struct KanbanPath<'a> {
     pub board: Option<&'a str>,
     pub list: Option<&'a str>,
