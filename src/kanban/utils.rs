@@ -7,3 +7,7 @@ pub fn prompt(message: &str) {
     };
     stdout.flush().unwrap();
 }
+
+pub fn format_name(name: String) -> String {
+    name.replace('_', " ")
+}
