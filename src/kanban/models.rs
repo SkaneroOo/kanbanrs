@@ -59,6 +59,16 @@ impl<'a> From<&'a str> for KanbanPath<'a> {
                     task: None
                 }
             }
+            for ch in part.chars() {
+                match ch {
+                    'a'..='z' | 'A'..='Z' | '0'..='9' | '_' | '-' => {},
+                    _ => return Self {
+                        board: None,
+                        list: None,
+                        task: None
+                    }
+                }
+            }
         }
         let mut parts = parts.into_iter();
         let ret = Self {
@@ -148,9 +158,15 @@ mod tests {
         }
 
         #[test]
+        fn chech_invalid_kanban_board_path_3() {
+            let path: KanbanPath = "bóard".into();
+            assert_eq!(path, KanbanPath{board: None, list: None, task: None})
+        }
+
+        #[test]
         fn chech_valid_kanban_list_path() {
-            let path: KanbanPath = "board.list".into();
-            assert_eq!(path, KanbanPath{board: Some("board"), list: Some("list"), task: None})
+            let path: KanbanPath = "1board.list".into();
+            assert_eq!(path, KanbanPath{board: Some("1board"), list: Some("list"), task: None})
         }
 
         #[test]
@@ -166,9 +182,15 @@ mod tests {
         }
 
         #[test]
+        fn chech_invalid_kanban_list_path_3() {
+            let path: KanbanPath = "board.liśt".into();
+            assert_eq!(path, KanbanPath{board: None, list: None, task: None})
+        }
+
+        #[test]
         fn chech_valid_kanban_task_path() {
-            let path: KanbanPath = "board.list.task".into();
-            assert_eq!(path, KanbanPath{board: Some("board"), list: Some("list"), task: Some("task")})
+            let path: KanbanPath = "board.list2.task".into();
+            assert_eq!(path, KanbanPath{board: Some("board"), list: Some("list2"), task: Some("task")})
         }
 
         #[test]
@@ -180,6 +202,12 @@ mod tests {
         #[test]
         fn chech_invalid_kanban_task_path_2() {
             let path: KanbanPath = ".board.list.task".into();
+            assert_eq!(path, KanbanPath{board: None, list: None, task: None})
+        }
+
+        #[test]
+        fn chech_invalid_kanban_task_path_3() {
+            let path: KanbanPath = "board.lis t.task".into();
             assert_eq!(path, KanbanPath{board: None, list: None, task: None})
         }
     }
