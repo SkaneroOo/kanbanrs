@@ -1,4 +1,8 @@
-use sqlite::{self, State, Row};
+use sqlite::{
+    self, 
+    State, 
+    Row
+};
 use pwhash::bcrypt;
 use rpassword::read_password;
 

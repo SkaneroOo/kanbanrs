@@ -1,6 +1,10 @@
 pub mod commands;
 
-pub use commands::{login, register, help};
+pub use commands::{
+    login, 
+    register, 
+    help
+};
 
 
 mod db;

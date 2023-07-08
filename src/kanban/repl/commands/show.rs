@@ -1,4 +1,14 @@
-use crate::kanban::{models::{KanbanPath, User}, db::{get_database, Database}, format_name};
+use crate::kanban::{
+    models::{
+        KanbanPath, 
+        User
+    }, 
+    db::{
+        get_database, 
+        Database
+    }, 
+    format_name
+};
 
 pub fn show(parameters: &[&str], user: &User) {
     let db = get_database();

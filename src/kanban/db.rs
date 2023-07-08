@@ -1,8 +1,18 @@
 use std::error::Error;
 
-use sqlite::{self, State, Row, Connection};
+use sqlite::{
+    self, 
+    State,
+    Row, 
+    Connection
+};
 
-use super::models::{User, Task, List, Board};
+use super::models::{
+    User, 
+    Task, 
+    List, 
+    Board
+};
 
 use crate::get_statement;
 

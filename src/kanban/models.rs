@@ -1,5 +1,8 @@
 use pwhash::bcrypt;
-use sqlite::{Row, Statement};
+use sqlite::{
+    Row, 
+    Statement
+};
 
 #[derive(PartialEq, Eq, Debug)]
 pub struct User {

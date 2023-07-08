@@ -1,6 +1,21 @@
-use sqlite::{State, Statement};
+use sqlite::State;
 
-use crate::{kanban::{models::{KanbanPath, User, Board, List, Task}, db::{get_database, Database}}, get_statement};
+use crate::{
+    kanban::{
+        models::{
+            KanbanPath, 
+            User, 
+            Board, 
+            List, 
+            Task
+        }, 
+        db::{
+            get_database, 
+            Database
+        }
+    }, 
+    get_statement
+};
 
 pub fn new(parameters: &[&str], user: &User) {
     if parameters.len() < 2 {

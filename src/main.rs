@@ -1,8 +1,15 @@
 #![allow(unreachable_code, unused_imports)]
-use std::{env, println};
+use std::{
+    env, 
+    println
+};
 
 mod kanban;
-use kanban::{help, login, register};
+use kanban::{
+    help, 
+    login, 
+    register
+};
 
 
 fn main() {

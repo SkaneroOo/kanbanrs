@@ -1,5 +1,12 @@
-use crate::kanban::{models::User, utils::prompt};
-use crate::kanban::repl::commands::{help, show, new};
+use crate::kanban::{
+    models::User, 
+    utils::prompt
+};
+use crate::kanban::repl::commands::{
+    help, 
+    show, 
+    new
+};
 
 pub fn repl(user: &User) {
     loop {
