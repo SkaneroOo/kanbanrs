@@ -5,7 +5,8 @@ use crate::kanban::{
 use crate::kanban::repl::commands::{
     help, 
     show, 
-    new
+    new,
+    add
 };
 
 pub fn repl(user: &User) {
@@ -18,6 +19,7 @@ pub fn repl(user: &User) {
             "HELP" => help(),
             "SHOW" => show(&tokens, user),
             "NEW" => new(&tokens, user),
+            "ADD" => add(&tokens, user),
             "EXIT" => return,
             _ => {
                 println!("ERROR\nCommand {0} is not implemented", tokens[0]);
