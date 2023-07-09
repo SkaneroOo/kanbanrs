@@ -125,7 +125,7 @@ impl Database {
     }
 
     pub fn get_list_tasks(&self, list_id: i64) -> Vec<Task> {
-        let query = "SELECT * FROM tasks WHERE board = ?;";
+        let query = "SELECT * FROM tasks WHERE list = ?;";
         let mut statement = get_statement!(self.conn, query, list_id);
         let mut ret: Vec<Task> = Vec::new();
         for row in statement.iter().flatten() {

@@ -96,13 +96,6 @@ fn show_task(db: &Database, b: &str, l: &str, t: &str, user: &User) {
         println!("Board `{b}` doesn't contain list `{l}`");
         return
     };
-    println!("{0}{1}", format_name(&list.title), {
-        if list.description.is_empty() {
-            String::new()
-        } else {
-            format!(" - {}", list.description)
-        }
-    });
     let Some(task) = db.get_list_task_named(t, list.idx) else {
         println!("list `{l}` doesn't contain task `{t}`");
         return

@@ -7,7 +7,8 @@ use crate::kanban::repl::commands::{
     show, 
     new,
     add,
-    remove
+    remove,
+    describe
 };
 
 pub fn repl(user: &User) {
@@ -22,6 +23,7 @@ pub fn repl(user: &User) {
             "NEW" => new(&tokens, user),
             "ADD" => add(&tokens, user),
             "REMOVE" => remove(&tokens, user),
+            "DESCRIBE" => describe(&tokens, user), 
             "EXIT" => return,
             _ => {
                 println!("ERROR\nCommand {0} is not implemented", tokens[0]);

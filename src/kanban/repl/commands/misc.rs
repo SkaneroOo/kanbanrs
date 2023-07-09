@@ -1,6 +1,11 @@
 pub fn help() {
     println!("Available commands:");
     println!("\tadd [user] [board] => add new user to board\n");
+    println!("\tdescribe [board|list|task] [description] => [");
+    println!("\t\t[board] [description] => set board description");
+    println!("\t\t[board].[list] [description] => set list description");
+    println!("\t\t[board].[list].[task] [description] => set task description");
+    println!("\t]\n");
     println!("\texit => exit current session\n");
     println!("\thelp => show this message\n");
     println!("\tnew [board|list|task] => [");
