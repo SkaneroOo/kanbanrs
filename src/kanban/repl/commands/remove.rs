@@ -15,7 +15,7 @@ use crate::{
     get_statement
 };
 
-pub fn add(parameters: &[&str], user: &User) {
+pub fn remove(parameters: &[&str], user: &User) {
     let db = get_database();
     if parameters.len() < 3 {
         println!("Provide username and board name");
@@ -28,7 +28,7 @@ pub fn add(parameters: &[&str], user: &User) {
     };
 
     if selected_user.idx == user.idx {
-        println!("You cannot add yourself to board");
+        println!("You cannot remove yourself from board");
         return
     }
 
@@ -47,24 +47,24 @@ pub fn add(parameters: &[&str], user: &User) {
     };
 
     if board.owner != user.idx {
-        println!("You cannot add members to board {name}");
+        println!("You cannot remove members from board {name}");
         return
     }
 
     let query = "SELECT * FROM members WHERE board = ? and user = ?";
     let mut statement = get_statement!(db, query, board.idx, selected_user.idx);
 
-    if matches!(statement.next(), Ok(State::Row)) {
-        println!("Selected user is already a member of selected board");
+    if matches!(statement.next(), Ok(State::Done)) {
+        println!("Selected user is not a member of selected board");
         return
     }
 
-    let query = "INSERT INTO members (board, user) VALUES (?, ?);";
+    let query = "DELETE FROM members WHERE board = ? and user = ?";
     let mut statement = get_statement!(db, query, board.idx, selected_user.idx);
 
     match statement.next() {
         Ok(State::Done) => {
-            println!("Successfully added new member to board {name}");
+            println!("Successfully removed member from board {name}");
         }
         Err(e) => {
             println!("Something went wrong while associating board with member");
